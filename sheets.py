@@ -7,11 +7,9 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
+TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
 
-def create_sheet_from_template():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
+def sheets_auth():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -32,16 +30,27 @@ def create_sheet_from_template():
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)
+    return service
+
+def create_sheet_from_template():
+    
+    service = sheets_auth()
 
     spreadsheet = {
         'properties': {
-            'title': 'Test Spreadsheet'
+            'title': 'Personalized Balance Sheet'
         }
     }
 
-
-    spreadsheet = service.spreadsheets().create(body=spreadsheet, fields='spreadsheetId').execute()
+    spreadsheet = service.spreadsheets().create(
+        body=spreadsheet, fields='spreadsheetId').execute()
     print('Spreadsheet ID: {0}'.format(spreadsheet.get('spreadsheetId')))
+
+
+def add(sheetId, cell, amount):
+    
+        
+
 
 if __name__ == '__main__':
     create_sheet_from_template()
