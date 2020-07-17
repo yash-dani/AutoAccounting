@@ -1,7 +1,6 @@
-from __future__ import print_function
 import pickle
 import os.path
-m googleapiclient.discovery import build
+from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
@@ -9,7 +8,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 
-def main():
+def create_sheet_from_template():
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
     """
@@ -45,4 +44,4 @@ def main():
     print('Spreadsheet ID: {0}'.format(spreadsheet.get('spreadsheetId')))
 
 if __name__ == '__main__':
-    main()
+    create_sheet_from_template()
