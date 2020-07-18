@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+from gpt3 import generateCommand
 
 class SheetsAPI:
     def __init__(self, sheetId=''):
@@ -155,4 +156,5 @@ class SheetsAPI:
 if __name__ == '__main__':
     # create_sheet_from_template()
     sheet = SheetsAPI()
-    sheet.add(0, 'Accounts Payable')
+    command = generateCommand("I bought $3000 software to be repaid in 1 month")
+    sheet.add(command[1], command[2])
