@@ -1,16 +1,20 @@
 import pickle
 import os.path
+from datetime import date
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+
 class SheetsAPI:
-    def __init__(self):
+    def __init__(self, sheetId=''):
         # If modifying these scopes, delete the file token.pickle.
         self.SCOPES = ['https://www.googleapis.com/auth/drive']
 
         self.TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
-        
+
+        self.current_sheet_id = sheetId
+
         self.get_cell = {
             # Current Assets
             'Cash': 'B5',
@@ -18,13 +22,13 @@ class SheetsAPI:
             'Inventory': 'B7',
             'Prepaid Expenses': 'B8',
             'Short-Term Investment': 'B9',
-            
+
             # Non-Current Assets
             'Long-Term Investments': 'B13',
             'Property, Plant, Equipment': 'B14',
             '(Less Accumulated Depreciation)': 'B15',
             'Intangible Assets': 'B16',
-            
+
             # Current Liabilities
             'Accounts Payable': 'E5',
             'Short-Term Loans': 'E6',
@@ -32,18 +36,19 @@ class SheetsAPI:
             'Accrued Salaries and Wages': 'E8',
             'Unearned Revenue': 'E9',
             'Current Portion of Long-Term Debt': 'E10',
-            
+
             # Non-Current Liabilities
             'Long-Term Debt': 'E14',
             'Deferred Income Tax': 'E15',
             'Non-Current Liabilities Other': 'E16',
-            
+
             # Owner's Equity
             'Owner\'s Investment': 'E20',
             'Retained Earnings': 'E21',
-            'Owner\'s Equity Other': 'E22'                                    
+            'Owner\'s Equity Other': 'E22'
         }
 
+        self.service = self.sheets_auth()
 
     def sheets_auth(self):
         creds = None
@@ -68,10 +73,9 @@ class SheetsAPI:
         service = build('sheets', 'v4', credentials=creds)
         return service
 
-
     def create_sheet_from_template(self):
 
-        service = self.sheets_auth()
+        service = self.service
 
         spreadsheet = {
             'properties': {
@@ -81,18 +85,58 @@ class SheetsAPI:
 
         spreadsheet = service.spreadsheets().create(
             body=spreadsheet, fields='spreadsheetId').execute()
-        print('Spreadsheet ID: {0}'.format(spreadsheet.get('spreadsheetId')))
 
+        newSheetId = spreadsheet.get('spreadsheetId')
+
+        self.current_sheet_id = newSheetId
+
+        copy_sheet_to_another_spreadsheet_request_body = {
+            'destination_spreadsheet_id': newSheetId,
+        }
+
+        request = service.spreadsheets().sheets().copyTo(spreadsheetId=self.TEMPLATE_ID,
+                                                         sheetId=0, body=copy_sheet_to_another_spreadsheet_request_body)
+        response = request.execute()
+
+        deleteData = {
+            "requests": [
+                {
+                    "deleteSheet": {
+                        "sheetId": 0
+                    }
+                }
+            ]
+        }
+
+        deleteSheet = service.spreadsheets().batchUpdate(
+            spreadsheetId=self.current_sheet_id, body=deleteData).execute()
+        
+        # Sets the date on the spreadsheet to today's date        
+        body = {
+            'values': [[str(date.today())]]
+        }
+        
+        resultSet = service.spreadsheets().values().update(
+            spreadsheetId=self.current_sheet_id, range='D1', valueInputOption='USER_ENTERED', body=body).execute()
+
+        # TODO: Change code below to process the `response` dict:
+        print(response)
+        return response
 
     def add(self, amount, section, sheetId=None):
-        if sheetId == None:
-            sheetId = self.TEMPLATE_ID
-            
+        if sheetId == None and self.current_sheet_id == '':
+            if self.current_sheet_id == '':
+                self.create_sheet_from_template()
+            else:
+                self.current_sheet_id = sheetId
+        print(self.current_sheet_id)
+
         cell = self.get_cell[section]
 
-        service = self.sheets_auth()
+        service = self.service
+
         resultGet = service.spreadsheets().values().get(
-            spreadsheetId=sheetId, range=cell).execute()
+            spreadsheetId=self.current_sheet_id, range=cell).execute()
         vals = resultGet.get('values', [])
         if len(vals) == 0:
             vals = [[0]]
@@ -103,10 +147,12 @@ class SheetsAPI:
         }
 
         resultSet = service.spreadsheets().values().update(
-            spreadsheetId=sheetId, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
+            spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
+
+        print(resultSet)
 
 
 if __name__ == '__main__':
     # create_sheet_from_template()
     sheet = SheetsAPI()
-    sheet.add(12, 'Accounts Payable')
+    sheet.add(0, 'Accounts Payable')
