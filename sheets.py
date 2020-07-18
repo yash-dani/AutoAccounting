@@ -7,9 +7,42 @@ from google.auth.transport.requests import Request
 class SheetsAPI:
     def __init__(self):
         # If modifying these scopes, delete the file token.pickle.
-        SCOPES = ['https://www.googleapis.com/auth/drive']
+        self.SCOPES = ['https://www.googleapis.com/auth/drive']
 
-        TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
+        self.TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
+        
+        self.get_cell = {
+            # Current Assets
+            'Cash': 'B5',
+            'Accounts Receivable': 'B6',
+            'Inventory': 'B7',
+            'Prepaid Expenses': 'B8',
+            'Short-Term Investment': 'B9',
+            
+            # Non-Current Assets
+            'Long-Term Investments': 'B13',
+            'Property, Plant, Equipment': 'B14',
+            '(Less Accumulated Depreciation)': 'B15',
+            'Intangible Assets': 'B16',
+            
+            # Current Liabilities
+            'Accounts Payable': 'E5',
+            'Short-Term Loans': 'E6',
+            'Income Taxes Payable': 'E7',
+            'Accrued Salaries and Wages': 'E8',
+            'Unearned Revenue': 'E9',
+            'Current Portion of Long-Term Debt': 'E10',
+            
+            # Non-Current Liabilities
+            'Long-Term Debt': 'E14',
+            'Deferred Income Tax': 'E15',
+            'Non-Current Liabilities Other': 'E16',
+            
+            # Owner's Equity
+            'Owner\'s Investment': 'E20',
+            'Retained Earnings': 'E21',
+            'Owner\'s Equity Other': 'E22'                                    
+        }
 
 
     def sheets_auth(self):
@@ -26,7 +59,7 @@ class SheetsAPI:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', SCOPES)
+                    'credentials.json', self.SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
@@ -51,12 +84,19 @@ class SheetsAPI:
         print('Spreadsheet ID: {0}'.format(spreadsheet.get('spreadsheetId')))
 
 
-    def add(self, amount, cell, sheetId):
+    def add(self, amount, section, sheetId=None):
+        if sheetId == None:
+            sheetId = self.TEMPLATE_ID
+            
+        cell = self.get_cell[section]
+        print(cell)
 
-        service = sheets_auth()
+        service = self.sheets_auth()
         resultGet = service.spreadsheets().values().get(
             spreadsheetId=sheetId, range=cell).execute()
         vals = resultGet.get('values', [])
+        if len(vals) == 0:
+            vals = [[0]]
         vals[0][0] = str(round(float(vals[0][0]) + float(amount), 2))
 
         body = {
@@ -70,4 +110,4 @@ class SheetsAPI:
 if __name__ == '__main__':
     # create_sheet_from_template()
     sheet = SheetsAPI()
-    sheet.add(10, 'B5', TEMPLATE_ID)
+    sheet.add(12, 'Accounts Payable')
