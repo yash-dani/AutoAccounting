@@ -89,7 +89,6 @@ class SheetsAPI:
             sheetId = self.TEMPLATE_ID
             
         cell = self.get_cell[section]
-        print(cell)
 
         service = self.sheets_auth()
         resultGet = service.spreadsheets().values().get(
