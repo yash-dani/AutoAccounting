@@ -1,3 +1,5 @@
 credentials.json
 token.pickle
 ai/key.txt
+.vscode/.ropeproject/config.py
+.vscode/.ropeproject/objectdb
