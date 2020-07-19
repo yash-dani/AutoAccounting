@@ -1,3 +1,9 @@
+'''
+author @george
+
+Sheets API integration to duplicate balance sheet template and add to it
+'''
+
 import pickle
 import os.path
 from datetime import date
@@ -8,13 +14,18 @@ from google.auth.transport.requests import Request
 
 class SheetsAPI:
     def __init__(self, sheetId=''):
-        # If modifying these scopes, delete the file token.pickle.
+        '''
+        Initializes SheetsAPI
+        '''
+        # auth scope for sheets API, if modifying, delete token.pickle
         self.SCOPES = ['https://www.googleapis.com/auth/drive']
 
+        # balance sheet template
         self.TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
 
         self.current_sheet_id = sheetId
-
+        
+        # dictionary of mapping of cell title with cell index
         self.get_cell = {
             # Current Assets
             'Cash': 'B5',
@@ -49,8 +60,12 @@ class SheetsAPI:
         }
 
         self.service = self.sheets_auth()
+        
 
     def sheets_auth(self):
+        '''
+        Gets authorization to modify sheets
+        '''
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -74,7 +89,12 @@ class SheetsAPI:
         return service
 
     def create_sheet_from_template(self):
-
+        '''
+        Creates new blank sheet, duplicated the template balance sheet into it and deletes
+        the intial empty sheet.
+        '''
+        
+        # Get authenitcated service
         service = self.service
 
         spreadsheet = {
@@ -82,7 +102,8 @@ class SheetsAPI:
                 'title': 'Personalized Balance Sheet'
             }
         }
-
+        
+        # Create a new spreadsheet
         spreadsheet = service.spreadsheets().create(
             body=spreadsheet, fields='spreadsheetId').execute()
 
@@ -94,10 +115,12 @@ class SheetsAPI:
             'destination_spreadsheet_id': newSheetId,
         }
 
+        # Copy template sheet to the new spreadsheet
         request = service.spreadsheets().sheets().copyTo(spreadsheetId=self.TEMPLATE_ID,
                                                          sheetId=0, body=copy_sheet_to_another_spreadsheet_request_body)
         response = request.execute()
-
+        
+        # Delete the empty intial sheet in the new spreadsheet
         deleteData = {
             "requests": [
                 {
@@ -108,48 +131,55 @@ class SheetsAPI:
             ]
         }
 
+        
         deleteSheet = service.spreadsheets().batchUpdate(
             spreadsheetId=self.current_sheet_id, body=deleteData).execute()
-        
-        # Sets the date on the spreadsheet to today's date        
+
+        # Sets the date on the spreadsheet to today's date
         body = {
             'values': [[str(date.today())]]
         }
-        
+
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range='D1', valueInputOption='USER_ENTERED', body=body).execute()
 
-        # TODO: Change code below to process the `response` dict:
-        print(response)
         return response
 
     def add(self, amount, section, sheetId=None):
+        '''
+        Modifies a cell in the spreadsheet by adding to it.
+        '''
+        
+        # Check if no sheetId provided and no current one set and if so, create a new sheet from the template
         if sheetId == None and self.current_sheet_id == '':
             if self.current_sheet_id == '':
                 self.create_sheet_from_template()
             else:
                 self.current_sheet_id = sheetId
-        print(self.current_sheet_id)
 
         cell = self.get_cell[section]
 
+        # Get authenitcated service
         service = self.service
 
+        # Get the current value in the cell to be modified
         resultGet = service.spreadsheets().values().get(
             spreadsheetId=self.current_sheet_id, range=cell).execute()
         vals = resultGet.get('values', [])
+        
         if len(vals) == 0:
             vals = [[0]]
+            
+        # Add to the cell
         vals[0][0] = str(round(float(vals[0][0]) + float(amount), 2))
 
+        # Update cell in sheet
         body = {
             'values': vals
         }
 
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
-
-        print(resultSet)
 
 
 if __name__ == '__main__':
