@@ -145,10 +145,21 @@ class SheetsAPI:
 
         return response
 
-    def add(self, amount, section, sheetId=None):
+    def update(self, function, amount, section, sheetId=None):
         '''
         Modifies a cell in the spreadsheet by adding to it.
         '''
+        
+        # Get cell being updated with error handling
+        try:
+            cell = self.get_cell[section]
+        except KeyError:
+            print("Field not found")
+            return
+        
+        # add or remove handling
+        if function == "remove":
+            amount *= -1.0            
         
         # Check if no sheetId provided and no current one set and if so, create a new sheet from the template
         if sheetId == None and self.current_sheet_id == '':
@@ -156,8 +167,6 @@ class SheetsAPI:
                 self.create_sheet_from_template()
             else:
                 self.current_sheet_id = sheetId
-
-        cell = self.get_cell[section]
 
         # Get authenitcated service
         service = self.service
@@ -184,5 +193,5 @@ class SheetsAPI:
 
 if __name__ == '__main__':
     # create_sheet_from_template()
-    sheet = SheetsAPI()
-    sheet.add(0, 'Accounts Payable')
+    sheet = SheetsAPI('1ZxXNFD7n3yOTjCmsWQCNfgHhFWwMdxaPMr2G0t7TPPg')
+    sheet.update("add", 100, 'eee')
