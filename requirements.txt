@@ -1,5 +1,5 @@
 openai
 datetime
-googleapiclient.discovery
-google_auth_oauthlib.flow
-google.auth.transport.requests
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

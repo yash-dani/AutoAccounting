@@ -12,7 +12,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 
-class SheetsAPI:
+class balanceSheet():
     def __init__(self, sheetId=''):
         '''
         Initializes SheetsAPI
@@ -182,7 +182,9 @@ class SheetsAPI:
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
 
 
+'''
 if __name__ == '__main__':
     # create_sheet_from_template()
-    sheet = SheetsAPI()
+    sheet = balanceSheet()
     sheet.add(0, 'Accounts Payable')
+'''
