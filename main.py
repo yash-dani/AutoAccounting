@@ -1,5 +1,6 @@
 import gpt3
 from sheets import balanceSheet
+from utils import clear
 
 
 if __name__ == '__main__':
@@ -17,6 +18,7 @@ if __name__ == '__main__':
 				print("Adding ",transaction[1], "to ", transaction[2])
 				statement.add(transaction[1],transaction[2])
 		else:
-			# Error
+			# Error in parsing message
 			print('GPT-3 was not able to process your statement. Try rewording it!')
+			clear()
 
