@@ -1,1 +1,20 @@
-Q: I bought a $30000 car on credit to be repaid in 5 years. A: add(30000, "Property, Plant, Equipment"); add (30000, "Long-Term Debt") Q: I bought $20000 of equipment to be repaid in 2 months. A: add(20000, "Property, Plant, Equipment"); add(20000, "Short-Term Loans") Q: A customer owes me $150 for his purchases. A: add(150, "Accounts Receivable")
+Q: I bought a $30000 car on credit to be repaid in 5 years. 
+A: [["add", 30000, "Property, Plant, Equipment"], ["add", 30000, "Long-Term Debt"]]
+
+Q: I bought $20000 of equipment to be repaid in 2 months. 
+A: [["add", 20000, "Property, Plant, Equipment"], ["add", 20000, "Short-Term Loans"]]
+
+Q: A customer owes me $150 for his purchases. 
+A: [["add", 150, "Accounts Receivable"]]
+
+Q: I bought an additional $12000 worth of inventory which I paid for immediately.
+A: [["add", 1200, "Inventory"], ["remove", 12000, "Cash"]]
+
+Q: I bought new furniture for the store that cost me $99 in cash.
+A: [["add", 99, "Property, Plant, Equipment"], ["remove", 99, "Cash"]]
+
+Q: I just took out a loan for $12900 that I need to pay back in 3 years.
+A: [["add", 12900, "Long-Term Debt"], ["add", 12900, "Cash"]]
+
+Q: I prepaid $12000 for the rent for the next 3 months.
+A: [["add", 12000, "Prepaid Expenses"], ["remove", 12000, "Cash"]]
