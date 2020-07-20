@@ -145,10 +145,21 @@ class balanceSheet():
 
         return response
 
-    def add(self, amount, section, sheetId=None):
+    def update(self, function, amount, section, sheetId=None):
         '''
         Modifies a cell in the spreadsheet by adding to it.
         '''
+        
+        # Get cell being updated with error handling
+        try:
+            cell = self.get_cell[section]
+        except KeyError:
+            print("Field not found")
+            return
+        
+        # add or remove handling
+        if function == "remove":
+            amount *= -1.0            
         
         # Check if no sheetId provided and no current one set and if so, create a new sheet from the template
         if sheetId == None and self.current_sheet_id == '':
@@ -156,8 +167,6 @@ class balanceSheet():
                 self.create_sheet_from_template()
             else:
                 self.current_sheet_id = sheetId
-
-        cell = self.get_cell[section]
 
         # Get authenitcated service
         service = self.service
@@ -180,11 +189,3 @@ class balanceSheet():
 
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
-
-
-'''
-if __name__ == '__main__':
-    # create_sheet_from_template()
-    sheet = balanceSheet()
-    sheet.add(0, 'Accounts Payable')
-'''
