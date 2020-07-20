@@ -189,9 +189,3 @@ class SheetsAPI:
 
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
-
-
-if __name__ == '__main__':
-    # create_sheet_from_template()
-    sheet = SheetsAPI('1ZxXNFD7n3yOTjCmsWQCNfgHhFWwMdxaPMr2G0t7TPPg')
-    sheet.update("add", 100, 'eee')
