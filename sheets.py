@@ -163,10 +163,9 @@ class balanceSheet():
         
         # Check if no sheetId provided and no current one set and if so, create a new sheet from the template
         if sheetId == None and self.current_sheet_id == '':
-            if self.current_sheet_id == '':
-                self.create_sheet_from_template()
-            else:
-                self.current_sheet_id = sheetId
+            self.create_sheet_from_template()
+        elif sheetId != None:
+            self.current_sheet_id = sheetId
 
         # Get authenitcated service
         service = self.service
