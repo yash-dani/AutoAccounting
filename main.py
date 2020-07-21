@@ -13,12 +13,16 @@ if __name__ == '__main__':
 	print("-----------------------------------------------------")
 	print()
 	statement = balanceSheet()
+ 
+	# Open sheet in browser
+	webbrowser.open('https://docs.google.com/spreadsheets/d/' +
+                    statement.current_sheet_id, new=1)
 	# Loop to make requests to bot
 	while True:
 		print()
 		request = input("Tell me about your transaction:\n")
 		transactionInfo = gpt3.getGPT3(request) # get GPT-3 Output
-		#print(transactionInfo)
+		# print(transactionInfo)
 		if type(transactionInfo) == list:
 			# Successfully parsed output
 			print()
