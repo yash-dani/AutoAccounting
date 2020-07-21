@@ -186,10 +186,3 @@ class balanceSheet():
 
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
-
-
-if __name__ == '__main__':
-    sheets = balanceSheet()
-    sheets.update("add", 100, "Cash")
-    sheets.update("add", 100, "Inventory")
-    sheets.update("remove", 10, "Cash")
