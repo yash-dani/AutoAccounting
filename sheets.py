@@ -24,7 +24,7 @@ class balanceSheet():
         self.TEMPLATE_ID = '17bnwsQya4yrbk9h8cR2-2fiVEYU2Eo-aA7LbowoRPzc'
 
         self.current_sheet_id = sheetId
-        
+
         # dictionary of mapping of cell title with cell index
         self.get_cell = {
             # Current Assets
@@ -61,6 +61,7 @@ class balanceSheet():
 
         self.service = self.sheets_auth()
         
+        self.create_sheet_from_template()
 
     def sheets_auth(self):
         '''
@@ -93,7 +94,7 @@ class balanceSheet():
         Creates new blank sheet, duplicated the template balance sheet into it and deletes
         the intial empty sheet.
         '''
-        
+
         # Get authenitcated service
         service = self.service
 
@@ -102,7 +103,7 @@ class balanceSheet():
                 'title': 'Personalized Balance Sheet'
             }
         }
-        
+
         # Create a new spreadsheet
         spreadsheet = service.spreadsheets().create(
             body=spreadsheet, fields='spreadsheetId').execute()
@@ -119,7 +120,7 @@ class balanceSheet():
         request = service.spreadsheets().sheets().copyTo(spreadsheetId=self.TEMPLATE_ID,
                                                          sheetId=0, body=copy_sheet_to_another_spreadsheet_request_body)
         response = request.execute()
-        
+
         # Delete the empty intial sheet in the new spreadsheet
         deleteData = {
             "requests": [
@@ -131,7 +132,6 @@ class balanceSheet():
             ]
         }
 
-        
         deleteSheet = service.spreadsheets().batchUpdate(
             spreadsheetId=self.current_sheet_id, body=deleteData).execute()
 
@@ -149,22 +149,20 @@ class balanceSheet():
         '''
         Modifies a cell in the spreadsheet by adding to it.
         '''
-        
+
         # Get cell being updated with error handling
         try:
             cell = self.get_cell[section]
         except KeyError:
             print("Field not found")
             return
-        
+
         # add or remove handling
         if function == "remove":
-            amount *= -1.0            
-        
-        # Check if no sheetId provided and no current one set and if so, create a new sheet from the template
-        if sheetId == None and self.current_sheet_id == '':
-            self.create_sheet_from_template()
-        elif sheetId != None:
+            amount *= -1.0
+
+        # Set object sheet ID if one is provided
+        if sheetId:
             self.current_sheet_id = sheetId
 
         # Get authenitcated service
@@ -174,10 +172,10 @@ class balanceSheet():
         resultGet = service.spreadsheets().values().get(
             spreadsheetId=self.current_sheet_id, range=cell).execute()
         vals = resultGet.get('values', [])
-        
+
         if len(vals) == 0:
             vals = [[0]]
-            
+
         # Add to the cell
         vals[0][0] = str(round(float(vals[0][0]) + float(amount), 2))
 
@@ -188,3 +186,10 @@ class balanceSheet():
 
         resultSet = service.spreadsheets().values().update(
             spreadsheetId=self.current_sheet_id, range=cell, valueInputOption='USER_ENTERED', body=body).execute()
+
+
+if __name__ == '__main__':
+    sheets = balanceSheet()
+    sheets.update("add", 100, "Cash")
+    sheets.update("add", 100, "Inventory")
+    sheets.update("remove", 10, "Cash")
