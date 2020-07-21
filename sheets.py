@@ -60,7 +60,6 @@ class balanceSheet():
         }
 
         self.service = self.sheets_auth()
-        print("sheetid", self.current_sheet_id)
         
         self.create_sheet_from_template()
 
