@@ -58,9 +58,7 @@ class balanceSheet():
             'Retained Earnings': 'E21',
             'Owner\'s Equity Other': 'E22'
         }
-
-        self.service = self.sheets_auth()
-        
+        self.service = self.sheets_auth()        
         self.create_sheet_from_template()
 
     def sheets_auth(self):
