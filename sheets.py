@@ -59,9 +59,9 @@ class balanceSheet():
             'Owner\'s Equity Other': 'E22'
         }
 
-        self.service = self.sheets_auth()
-        print("sheetid", self.current_sheet_id)
-        
+
+        self.service = self.sheets_auth()        
+        self.create_sheet_from_template()
 
     def sheets_auth(self):
         '''
