@@ -1,7 +1,7 @@
-import gpt3 # user generated packages
+import gpt3  # user generated packages
 from sheets import balanceSheet
 from utils import clear
-
+import webbrowser
 
 if __name__ == '__main__':
 	clear()
