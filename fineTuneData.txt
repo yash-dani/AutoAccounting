@@ -18,3 +18,4 @@ A: [["add", 12900, "Long-Term Debt"], ["add", 12900, "Cash"]]
 
 Q: I prepaid $12000 for the rent for the next 3 months.
 A: [["add", 12000, "Prepaid Expenses"], ["remove", 12000, "Cash"]]
+

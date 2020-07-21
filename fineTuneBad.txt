@@ -9,3 +9,4 @@ A: add(150, Accounts Receivable)
 
 Q: I bought $3000 software to be repaid in 1 month
 A: add(3000, Property, Plant, Equipment); add(3000, Short-Term Loans)
+
