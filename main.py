@@ -13,9 +13,7 @@ if __name__ == '__main__':
 	statement = balanceSheet()
 	# Loop to make requests to bot
 	while True:
-		
 		request = input("Tell me about your transaction: ")
-
 		transactionInfo = gpt3.getGPT3(request) # get GPT-3 Output
 		print(transactionInfo)
 		if type(transactionInfo) == list:
