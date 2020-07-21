@@ -60,6 +60,7 @@ class balanceSheet():
         }
 
         self.service = self.sheets_auth()
+        print("sheetid", self.current_sheet_id)
         
 
     def sheets_auth(self):

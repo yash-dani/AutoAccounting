@@ -5,3 +5,4 @@ key.txt
 .vscode/.ropeproject/objectdb
 fineTuneBad.txt
 gpt-3_finetune
+__pycache__
