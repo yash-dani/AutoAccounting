@@ -1,5 +1,5 @@
 '''
-authors: @yash-dani @georgekysaad
+authors: @yash-dani @gkysaad
 date: July 2020
 Turn informat statements into requests to update balance sheets using GPT-3 
 '''
