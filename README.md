@@ -1,7 +1,5 @@
-# gpt-3_for_finance
-turning commands entered into gpt-3 into financial statements
+# GPT-3 for Finance
+This program takes plain English statements and turns them into code that updates an accounting balance sheet.
 
-
-todo:
-- create flask app and build proper front-end
-- deploy to prod
+### Demo
+A demo of this program can be found [here](https://twitter.com/itsyashdani/status/1285695850300219392).
