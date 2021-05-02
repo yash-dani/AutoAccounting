@@ -1,5 +1,5 @@
 # GPT-3 for Finance
-This program takes plain English statements and turns them into code that updates an accounting balance sheet.
+A GPT-3 bot that lets people with no accounting knowledge generate financial statements using everyday language.
 
 ### Demo
 A demo of this program can be found [here](https://twitter.com/itsyashdani/status/1285695850300219392).
